@@ -97,9 +97,10 @@ function App() {
             type='file'
           />
         </Form.Group>
+        <label>Second input (B), optional, for Decode &amp; Diff</label>
         <Form.Group>
           <TextArea
-            placeholder="Second input to compare (optional)"
+            placeholder="Paste a second Protobuf to compare with the first one"
             onChange={e => setHexB(e.target.value)}
             value={hexB}
             data-testid="input-hex-b"

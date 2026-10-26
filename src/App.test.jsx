@@ -31,6 +31,11 @@ describe('App', () => {
         await screen.getByText('Result')
     })
 
+    it('labels the second input', () => {
+        render(<App />)
+        screen.getByText('Second input (B), optional, for Decode & Diff')
+    })
+
     it('disables diff button until both inputs are filled', () => {
         render(<App />)
         const diffButton = screen.getByTestId('diff-button')
