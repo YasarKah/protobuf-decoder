@@ -100,9 +100,12 @@ export function diffProtos(buffers, parseDelimited) {
   const decoded = buffers.map(buffer => decodeProto(buffer, parseDelimited));
   const partLists = decoded.map(result => result.parts);
   const leftOvers = decoded.map(result => result.leftOver);
+  const hasDelimiters = partLists.some(parts =>
+    parts.some(part => part.type === TYPES.MSG_LEN_DELIMITER)
+  );
 
   return {
-    rows: parseDelimited ? alignMessages(partLists) : alignParts(partLists),
+    rows: hasDelimiters ? alignMessages(partLists) : alignParts(partLists),
     leftOvers,
     leftOverChanged: !leftOvers.every(leftOver => leftOver.equals(leftOvers[0]))
   };

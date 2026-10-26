@@ -98,4 +98,13 @@ describe("diffProtos", () => {
     expect(result.rows[1].status).toEqual("missing");
     expect(result.rows[1].cells[1]).toBeNull();
   });
+
+  it("delimited gRPC input without delimiters is diffed by field", () => {
+    const grpc = parseInput("0000000004 0a020801");
+    const result = diffProtos([grpc, grpc], true);
+
+    expect(result.rows).toHaveLength(1);
+    expect(result.rows[0].index).toEqual(1);
+    expect(result.rows[0].status).toEqual("same");
+  });
 });
