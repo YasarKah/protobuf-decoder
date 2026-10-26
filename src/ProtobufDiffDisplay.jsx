@@ -54,7 +54,7 @@ function DiffTable(props) {
       <Table.Body>
         {rows.map((row, i) => (
           <Fragment key={i}>
-            <Table.Row warning={row.status !== "same"}>
+            <Table.Row className="diff-row" warning={row.status !== "same"}>
               <Table.Cell>{row.index}</Table.Cell>
               {row.cells.map((cell, j) => (
                 <DiffCells

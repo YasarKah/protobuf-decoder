@@ -49,6 +49,24 @@ describe("ProtobufDiffDisplay", () => {
     expect(container.querySelectorAll("table").length).toBeGreaterThan(1);
   });
 
+  it("marks field rows but not nested containers for hover highlight", () => {
+    const { container } = render(
+      <ProtobufDiffDisplay value={diffProtos([a, b], false)} />
+    );
+
+    const bodyRows = [...container.querySelectorAll("tbody > tr")];
+    const fieldRows = bodyRows.filter(row =>
+      row.classList.contains("diff-row")
+    );
+    const containerRows = bodyRows.filter(row => row.cells.length === 1);
+
+    expect(fieldRows.length).toBeGreaterThan(0);
+    expect(containerRows.length).toBeGreaterThan(0);
+    for (const row of containerRows) {
+      expect(row.classList.contains("diff-row")).toBe(false);
+    }
+  });
+
   it("shows left over bytes per input", () => {
     render(
       <ProtobufDiffDisplay value={diffProtos([a, parseInput("ffff")], false)} />
