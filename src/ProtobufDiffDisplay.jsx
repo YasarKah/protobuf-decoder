@@ -19,11 +19,15 @@ function DiffCells(props) {
 
   return (
     <Fragment>
-      <Table.Cell className="diff-input-start">
+      <Table.Cell className="diff-input-start diff-range">
         {cell.part.byteRange.join("-")}
       </Table.Cell>
-      <Table.Cell>{typeToString(cell.part.type, subType)}</Table.Cell>
-      <Table.Cell>{hideContent ? null : contents}</Table.Cell>
+      <Table.Cell className="diff-type">
+        {typeToString(cell.part.type, subType)}
+      </Table.Cell>
+      <Table.Cell className="diff-value">
+        {hideContent ? null : contents}
+      </Table.Cell>
     </Fragment>
   );
 }

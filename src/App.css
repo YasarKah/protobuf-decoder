@@ -13,3 +13,9 @@ table td {
 .ui.celled.table .diff-input-start {
   border-left: 3px solid rgba(34, 36, 38, 0.4);
 }
+
+.ui.table tr.diff-row:has(> td.diff-range:hover) > td.diff-range,
+.ui.table tr.diff-row:has(> td.diff-type:hover) > td.diff-type,
+.ui.table tr.diff-row:has(> td.diff-value:hover) > td.diff-value {
+  background: rgba(33, 133, 208, 0.35) !important;
+}

@@ -83,6 +83,19 @@ describe("ProtobufDiffDisplay", () => {
     }
   });
 
+  it("tags value cells so matching cells can be highlighted", () => {
+    const { container } = render(
+      <ProtobufDiffDisplay
+        value={diffProtos([parseInput("0801"), parseInput("0802")], false)}
+      />
+    );
+
+    const row = container.querySelector("tr.diff-row");
+    for (const role of ["diff-range", "diff-type", "diff-value"]) {
+      expect(row.querySelectorAll(`:scope > td.${role}`)).toHaveLength(2);
+    }
+  });
+
   it("shows left over bytes per input", () => {
     render(
       <ProtobufDiffDisplay value={diffProtos([a, parseInput("ffff")], false)} />
