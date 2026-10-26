@@ -1,11 +1,11 @@
-import React, { Fragment } from "react";
+import React, { Fragment, memo, useCallback, useState } from "react";
 import { Message, Table } from "semantic-ui-react";
 import { getProtobufPart } from "./ProtobufPart";
 import { typeToString } from "./protobufDecoder";
 import { bufferToPrettyHex } from "./hexUtils";
 
-function DiffCells(props) {
-  const { cell, hideContent } = props;
+const DiffCells = memo(function DiffCells(props) {
+  const { cell, hideContent, activeRole, onHover, rowIndex } = props;
 
   if (!cell) {
     return (
@@ -16,28 +16,35 @@ function DiffCells(props) {
   }
 
   const [contents, subType] = getProtobufPart(cell.part);
+  const cellProps = (role, className = role) => ({
+    className:
+      role === activeRole ? `${className} diff-cell-active` : className,
+    onMouseEnter: () => onHover(rowIndex, role)
+  });
 
   return (
     <Fragment>
-      <Table.Cell className="diff-input-start diff-range">
+      <Table.Cell {...cellProps("diff-range", "diff-input-start diff-range")}>
         {cell.part.byteRange.join("-")}
       </Table.Cell>
-      <Table.Cell className="diff-type">
+      <Table.Cell {...cellProps("diff-type")}>
         {typeToString(cell.part.type, subType)}
       </Table.Cell>
-      <Table.Cell className="diff-value">
+      <Table.Cell {...cellProps("diff-value")}>
         {hideContent ? null : contents}
       </Table.Cell>
     </Fragment>
   );
-}
+});
 
 function DiffTable(props) {
   const { rows, labels } = props;
   const columnCount = 1 + labels.length * 3;
+  const [hovered, setHovered] = useState(null);
+  const onHover = useCallback((row, role) => setHovered({ row, role }), []);
 
   return (
-    <Table celled>
+    <Table celled onMouseLeave={() => setHovered(null)}>
       <Table.Header>
         <Table.Row>
           <Table.HeaderCell rowSpan={2}>Field Number</Table.HeaderCell>
@@ -67,18 +74,28 @@ function DiffTable(props) {
         {rows.map((row, i) => (
           <Fragment key={i}>
             <Table.Row className="diff-row" warning={row.status !== "same"}>
-              <Table.Cell>{row.index}</Table.Cell>
+              <Table.Cell onMouseEnter={() => setHovered(null)}>
+                {row.index}
+              </Table.Cell>
               {row.cells.map((cell, j) => (
                 <DiffCells
                   key={j}
                   cell={cell}
                   hideContent={row.children !== null && row.index !== -1}
+                  activeRole={
+                    hovered && hovered.row === i ? hovered.role : null
+                  }
+                  onHover={onHover}
+                  rowIndex={i}
                 />
               ))}
             </Table.Row>
             {row.children && (
               <Table.Row>
-                <Table.Cell colSpan={columnCount}>
+                <Table.Cell
+                  colSpan={columnCount}
+                  onMouseEnter={() => setHovered(null)}
+                >
                   <DiffTable rows={row.children} labels={labels} />
                 </Table.Cell>
               </Table.Row>

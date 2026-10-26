@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import ProtobufDiffDisplay from "./ProtobufDiffDisplay";
 import { diffProtos } from "./protobufDiff";
 import { parseInput } from "./hexUtils";
@@ -94,6 +94,42 @@ describe("ProtobufDiffDisplay", () => {
     for (const role of ["diff-range", "diff-type", "diff-value"]) {
       expect(row.querySelectorAll(`:scope > td.${role}`)).toHaveLength(2);
     }
+  });
+
+  it("highlights the matching value cell on both sides on hover", () => {
+    const { container } = render(
+      <ProtobufDiffDisplay
+        value={diffProtos([parseInput("0801"), parseInput("0802")], false)}
+      />
+    );
+
+    const row = container.querySelector("tr.diff-row");
+    const values = row.querySelectorAll(":scope > td.diff-value");
+    fireEvent.mouseEnter(values[0]);
+
+    expect(row.querySelectorAll(".diff-cell-active")).toHaveLength(2);
+    expect(values[1].classList.contains("diff-cell-active")).toBe(true);
+
+    fireEvent.mouseLeave(container.querySelector("table"));
+    expect(row.querySelectorAll(".diff-cell-active")).toHaveLength(0);
+  });
+
+  it("does not decode other rows again on hover", () => {
+    const { container } = render(
+      <ProtobufDiffDisplay
+        value={diffProtos(
+          [parseInput("0801 1203616263"), parseInput("0802 1203616263")],
+          false
+        )}
+      />
+    );
+    const log = vi.spyOn(console, "log").mockImplementation(() => {});
+
+    const value = container.querySelector("tr.diff-row td.diff-value");
+    fireEvent.mouseEnter(value);
+
+    expect(log).not.toHaveBeenCalled();
+    log.mockRestore();
   });
 
   it("shows left over bytes per input", () => {
