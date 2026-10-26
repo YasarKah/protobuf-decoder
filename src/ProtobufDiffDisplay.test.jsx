@@ -67,6 +67,22 @@ describe("ProtobufDiffDisplay", () => {
     }
   });
 
+  it("marks where each input's columns start", () => {
+    const { container } = render(
+      <ProtobufDiffDisplay
+        value={diffProtos([parseInput("08010802"), parseInput("0801")], false)}
+      />
+    );
+
+    const headerRows = container.querySelectorAll("thead > tr");
+    for (const row of headerRows) {
+      expect(row.querySelectorAll(".diff-input-start")).toHaveLength(2);
+    }
+    for (const row of container.querySelectorAll("tbody > tr")) {
+      expect(row.querySelectorAll(".diff-input-start")).toHaveLength(2);
+    }
+  });
+
   it("shows left over bytes per input", () => {
     render(
       <ProtobufDiffDisplay value={diffProtos([a, parseInput("ffff")], false)} />

@@ -9,7 +9,7 @@ function DiffCells(props) {
 
   if (!cell) {
     return (
-      <Table.Cell colSpan={3} negative>
+      <Table.Cell className="diff-input-start" colSpan={3} negative>
         (missing)
       </Table.Cell>
     );
@@ -19,7 +19,9 @@ function DiffCells(props) {
 
   return (
     <Fragment>
-      <Table.Cell>{cell.part.byteRange.join("-")}</Table.Cell>
+      <Table.Cell className="diff-input-start">
+        {cell.part.byteRange.join("-")}
+      </Table.Cell>
       <Table.Cell>{typeToString(cell.part.type, subType)}</Table.Cell>
       <Table.Cell>{hideContent ? null : contents}</Table.Cell>
     </Fragment>
@@ -36,7 +38,11 @@ function DiffTable(props) {
         <Table.Row>
           <Table.HeaderCell rowSpan={2}>Field Number</Table.HeaderCell>
           {labels.map(label => (
-            <Table.HeaderCell key={label} colSpan={3}>
+            <Table.HeaderCell
+              key={label}
+              className="diff-input-start"
+              colSpan={3}
+            >
               {label}
             </Table.HeaderCell>
           ))}
@@ -44,7 +50,9 @@ function DiffTable(props) {
         <Table.Row>
           {labels.map(label => (
             <Fragment key={label}>
-              <Table.HeaderCell>Byte Range</Table.HeaderCell>
+              <Table.HeaderCell className="diff-input-start">
+                Byte Range
+              </Table.HeaderCell>
               <Table.HeaderCell>Type</Table.HeaderCell>
               <Table.HeaderCell>Content</Table.HeaderCell>
             </Fragment>
